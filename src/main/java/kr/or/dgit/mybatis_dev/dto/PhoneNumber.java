@@ -1,15 +1,15 @@
 package kr.or.dgit.mybatis_dev.dto;
 
 public class PhoneNumber {
-	private String contryCode;
+	private String countryCode;
 	private String stateCode;
 	private String number;
 
 	public PhoneNumber() {
 	}
 
-	public PhoneNumber(String contryCode, String stateCode, String number) {
-		this.contryCode = contryCode;
+	public PhoneNumber(String countryCode, String stateCode, String number) {
+		this.countryCode = countryCode;
 		this.stateCode = stateCode;
 		this.number = number;
 	}
@@ -19,7 +19,7 @@ public class PhoneNumber {
 			String[] parts = str.split("-");
 
 			if (parts.length > 0)
-				this.contryCode = parts[0];
+				this.countryCode = parts[0];
 			if (parts.length > 1)
 				this.stateCode = parts[1];
 			if (parts.length > 2)
@@ -27,17 +27,12 @@ public class PhoneNumber {
 		}
 	}
 
-	@Override
-	public String toString() {
-		return String.format("%s-%s-%s", contryCode, stateCode, number);
+	public String getCountryCode() {
+		return countryCode;
 	}
 
-	public String getContryCode() {
-		return contryCode;
-	}
-
-	public void setContryCode(String contryCode) {
-		this.contryCode = contryCode;
+	public void setCountryCode(String countryCode) {
+		this.countryCode = countryCode;
 	}
 
 	public String getStateCode() {
@@ -54,6 +49,11 @@ public class PhoneNumber {
 
 	public void setNumber(String number) {
 		this.number = number;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("%s-%s-%s", countryCode, stateCode, number);
 	}
 
 }

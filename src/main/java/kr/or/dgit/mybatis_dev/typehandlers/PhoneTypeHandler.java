@@ -13,7 +13,8 @@ import kr.or.dgit.mybatis_dev.dto.PhoneNumber;
 public class PhoneTypeHandler extends BaseTypeHandler<PhoneNumber> {
 
 	@Override
-	public void setNonNullParameter(PreparedStatement ps, int i, PhoneNumber parameter, JdbcType jdbcType) throws SQLException {
+	public void setNonNullParameter(PreparedStatement ps, int i, PhoneNumber parameter, JdbcType jdbcType)
+			throws SQLException {
 		ps.setString(i, parameter.toString());
 	}
 

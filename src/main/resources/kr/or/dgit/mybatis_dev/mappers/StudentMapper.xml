@@ -7,24 +7,202 @@
 	</sql>
 	<sql id="whereSql">
 		<where>
-			<if test="studId != null">
+			<if test="studId !=null">
 				stud_id=#{studId}
 			</if>
 		</where>
 	</sql>
-	<select id="selectStudentByNo" parameterType="Student" resultType="Student">
-		<include refid="selectSql"/>
-			where stud_id=#{studId}
+
+	<select id="selectStudentByAll" resultType="Student">
+		<include refid="selectSql" />
 	</select>
-	<resultMap type="Student" id="StudentAssociation" extends="StudentResult">
-		<association property="address" resultMap="kr.or.dgit.mybatis_dev.dao.AddressDao.AddressResult"/>
+
+	<select id="selectStudentByNo" parameterType="Student"
+		resultType="Student">
+		<include refid="selectSql" />
+		where stud_id=#{studId}
+	</select>
+
+	<select id="selectStudentByNoWithAPI" parameterType="Student"
+		resultType="Student">
+		<include refid="selectSql" />
+		<include refid="whereSql" />
+	</select>
+
+	<select id="selectStudentByAllWithAPI" resultType="Student">
+		<include refid="selectSql" />
+	</select>
+
+	<!-- insert -->
+	<sql id="insertSQL">
+		INSERT INTO STUDENTS(STUD_ID, NAME, EMAIL, PHONE, DOB)
+		VALUES(#{studId}, #{name}, #{email}, #{phone}, #{dob})
+	</sql>
+
+	<insert id="insertStudent" parameterType="Student">
+		<include refid="insertSQL" />
+	</insert>
+
+	<insert id="insertStudentWithAPI" parameterType="Student">
+		<include refid="insertSQL" />
+	</insert>
+
+	<insert id="insertStudentAutoInc" parameterType="Student"
+		useGeneratedKeys="true" keyProperty="studId">
+		INSERT INTO STUDENTS(STUD_ID,NAME,
+		EMAIL, PHONE, DOB)
+		VALUES(#{studId},#{name}, #{email}, #{phone},
+		#{dob})
+	</insert>
+
+	<!-- update -->
+	<sql id="updateSQL">
+		UPDATE STUDENTS SET NAME=#{name},
+		EMAIL=#{email},PHONE=#{phone}, DOB=#{dob}
+		WHERE STUD_ID=#{studId}
+	</sql>
+
+	<update id="updateStudent" parameterType="Student">
+		<include refid="updateSQL" />
+	</update>
+
+	<update id="updateStudentWithAPI" parameterType="Student">
+		<include refid="updateSQL" />
+	</update>
+
+	<!-- delete -->
+	<sql id="deleteSql">
+		DELETE FROM STUDENTS WHERE STUD_ID=#{studId}
+	</sql>
+
+	<update id="deleteStudent" parameterType="int">
+		<include refid="deleteSql" />
+	</update>
+
+	<update id="deleteStudentWithAPI" parameterType="int">
+		<include refid="deleteSql" />
+	</update>
+
+	<!-- resultmap -->
+	<resultMap id="StudentResult" type="Student">
+		<id property="studId" column="stud_id" />
+		<result property="name" column="name" />
+		<result property="email" column="email" />
+		<result property="phone" column="phone" />
+		<result property="dob" column="dob" />
 	</resultMap>
-	<select id="selectStudentByNoAssociation" parameterType="Student" resultMap="StudentAssociation">
-		<include refid="selectJoinAddressSql"/>
-		<include refid="whereSql"/>
+
+	<select id="selectStudentByAllForResutlMap" resultMap="StudentResult">
+		<include refid="selectSql" />
 	</select>
-	<select id="selectStudentByNoAssociationWithAPI" parameterType="Student" resultMap="StudentAssociation">
-		<include refid="selectJoinAddressSql"/>
-		<include refid="whereSql"/>
+
+	<select id="selectStudentByAllForResutlMapWithAPI" resultMap="StudentResult">
+		<include refid="selectSql" />
 	</select>
+
+	<!-- hashMap -->
+	<select id="selectStudentByAllForHashMap" resultType="map">
+		<include refid="selectSql" />
+	</select>
+	<select id="selectStudentByAllForHashMapWithAPI" resultType="map">
+		<include refid="selectSql" />
+	</select>
+
+	<resultMap id="StudentWithAddressResult" type="Student"
+		extends="StudentResult">
+		<result property="address.addrId" column="addr_id" />
+		<result property="address.street" column="street" />
+		<result property="address.city" column="city" />
+		<result property="address.state" column="state" />
+		<result property="address.zip" column="zip" />
+		<result property="address.country" column="country" />
+	</resultMap>
+
+	<sql id="selectJoinAddressSql">
+		SELECT STUD_ID, NAME, EMAIL, PHONE, A.ADDR_ID, STREET, CITY, STATE, ZIP,
+		COUNTRY
+		FROM STUDENTS S LEFT OUTER JOIN ADDRESSES A ON S.ADDR_ID=A.ADDR_ID
+	</sql>
+
+	<select id="selectStudentByNoForResultMapExtends" parameterType="Student"
+		resultMap="StudentWithAddressResult">
+		<include refid="selectJoinAddressSql" />
+		<include refid="whereSql" />
+	</select>
+
+	<select id="selectStudentByNoForResultMapExtendsWithAPI"
+		parameterType="Student" resultMap="StudentWithAddressResult">
+		<include refid="selectJoinAddressSql" />
+		<include refid="whereSql" />
+	</select>
+
+	<!-- 내포된 결과매핑(ResultMap)을 사용한 일대일 매핑 -->
+	<resultMap id="StudentAssociation" type="Student" extends="StudentResult">
+		<association property="address"
+			resultMap="kr.or.dgit.mybatis_dev.dao.AddressDao.AddressResult" />
+	</resultMap>
+
+	<select id="selectStudentByNoAssociation" parameterType="Student"
+		resultMap="StudentAssociation">
+		<include refid="selectJoinAddressSql" />
+		<include refid="whereSql" />
+	</select>
+
+	<select id="selectStudentByNoAssociationWithAPI" parameterType="Student"
+		resultMap="StudentAssociation">
+		<include refid="selectJoinAddressSql" />
+		<include refid="whereSql" />
+	</select>
+
+    <!-- enum 타입 다루기 -->
+    <sql id="insertEnumSql">
+        INSERT INTO STUDENTS(STUD_ID, NAME, EMAIL,PHONE, DOB, GENDER) 
+        VALUES(#{studId}, #{name}, #{email}, #{phone}, #{dob}, #{gender})
+    </sql>
+    
+    <insert id="insertEnumStudent" parameterType="Student" useGeneratedKeys="true" keyProperty="studId">
+        <include refid="insertEnumSql"/>
+    </insert>
+    
+    <insert id="insertEnumStudentWithAPI" parameterType="Student" useGeneratedKeys="true" keyProperty="studId">
+        <include refid="insertEnumSql"/>
+	</insert>
+	
+    <!-- 여러 개의 입력 파라미터 전달 -->
+	<resultMap type="Student" id="StudentGenderResult"  extends="StudentResult">
+    	<result property="gender" column="gender" />
+    </resultMap>
+	<sql id="selectParameterSql">
+        select stud_id, name, email, phone, dob, gender from students
+    </sql>
+    <sql id="whereNameEmailSql">
+        <where>
+            <if test="name != null">
+                name = #{name}
+            </if>
+            <if test="email != null">
+                AND email = #{email}
+            </if>
+        </where>
+    </sql>
+	<select id="selectAllStudentByParam" resultMap="StudentGenderResult">
+        <include refid="selectParameterSql"/>
+        where name=#{param1} and email=#{param2}
+    </select>
+    
+    <select id="selectAllStudentByStudent" parameterType="Student" resultMap="StudentGenderResult">
+        <include refid="selectParameterSql"/>
+        <include refid="whereNameEmailSql"/>
+    </select>
+
+    <select id="selectAllStudentByMap" parameterType="map" resultMap="StudentGenderResult">
+        <include refid="selectParameterSql"/>
+        <include refid="whereNameEmailSql"/>
+    </select>
+    
+	<!-- ResultSet 처리방식의 재정의 -->
+    <select id="selectStudentForMap" resultMap="StudentGenderResult">
+        <include refid="selectParameterSql" />
+    </select>
+	
 </mapper>
