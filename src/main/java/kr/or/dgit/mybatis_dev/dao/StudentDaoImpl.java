@@ -20,4 +20,16 @@ public class StudentDaoImpl implements StudentDao {
 		return SqlSession.getMapper(StudentDao.class).selectStudentByNo(student);
 	}
 
+	@Override
+	public Student selectStudentByNoAssociation(Student student) {
+		log.debug("selectStudentByNoAssociation()");
+		return SqlSession.getMapper(StudentDao.class).selectStudentByNoAssociation(student);
+	}
+
+	@Override
+	public Student selectStudentByNoAssociationWithAPI(Student student) {
+		log.debug("selectStudentByNoAssociationWithAPI()");
+		return SqlSession.getMapper(StudentDao.class).selectStudentByNoAssociationWithAPI(student);
+	}
+
 }

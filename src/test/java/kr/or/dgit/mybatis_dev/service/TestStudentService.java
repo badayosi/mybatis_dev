@@ -31,5 +31,16 @@ public class TestStudentService {
 		Student findStudent = StudentService.findStudentByNo(student);
 		Assert.assertEquals(student.getStudId(), findStudent.getStudId());
 	}
+	
+	@Test
+	public void test2SelectStudentByNoAssociation() {
+		Student student = new Student();
+		student.setStudId(1);
+		
+		Student extStd = StudentService.findStudentByNoAssociation(student);
+		Student extStdApi = StudentService.findStudentByNoAssociationWithAPI(student);
+		
+		Assert.assertEquals(extStd.getStudId(), extStdApi.getStudId());
+	}
 
 }

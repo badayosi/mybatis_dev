@@ -14,6 +14,17 @@
 	</sql>
 	<select id="selectStudentByNo" parameterType="Student" resultType="Student">
 		<include refid="selectSql"/>
-		where stud_id=#{studId}
+			where stud_id=#{studId}
+	</select>
+	<resultMap type="Student" id="StudentAssociation" extends="StudentResult">
+		<association property="address" resultMap="kr.or.dgit.mybatis_dev.dao.AddressDao.AddressResult"/>
+	</resultMap>
+	<select id="selectStudentByNoAssociation" parameterType="Student" resultMap="StudentAssociation">
+		<include refid="selectJoinAddressSql"/>
+		<include refid="whereSql"/>
+	</select>
+	<select id="selectStudentByNoAssociationWithAPI" parameterType="Student" resultMap="StudentAssociation">
+		<include refid="selectJoinAddressSql"/>
+		<include refid="whereSql"/>
 	</select>
 </mapper>
