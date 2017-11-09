@@ -10,4 +10,99 @@
         <result property="endDate" column="end_date"/>
     </resultMap>
     
+    <sql id="courseSql">
+    	SELECT * FROM COURSES
+    </sql>
+    
+    <sql id="whereSql">
+    	<where>
+    		<if test="courseName != null">
+    			AND NAME LIKE #{courseName}
+    		</if>
+    		<if test="startDate != null">
+    			AND START_DATE &gt;= #{startDate}
+    		</if>
+    		<if test="endDate != null">
+    			AND END_DATE &lt;= #{endDate}
+    		</if>
+    	</where>
+    </sql>
+    
+    <select id="selectCoursesByCondition" parameterType="map" resultMap="CourseResult">
+    	<include refid="courseSql"/>
+    	<include refid="whereSql"/>
+    </select>
+    
+    <sql id="chooseSql">
+    	<choose>
+    		<when test="searchBy=='Tutor'">
+    			WHERE TUTOR_ID=#{tutorID}
+    		</when>
+    		<when test="searchBy=='CourseName'">
+    			WHERE name like #{courseName}
+    		</when>
+    		<otherwise>
+    			WHERE end_date &gt;=now()
+    		</otherwise>
+    	</choose>
+    </sql>
+    
+    <select id="selectCaseCourses" parameterType="map" resultMap="CourseResult">
+    	<include refid="courseSql"/>
+    	<include refid="chooseSql"/>
+    </select>
+    
+    <sql id="whereSql2">
+    	<where>
+    		<if test="tutorId != null">
+    			TUTOR_ID = #{tutorId}
+    		</if>
+    		<if test="courseName != null">
+    			AND name like #{courseName}
+    		</if>
+    		<if test="startDate != null">
+    			AND start_date &gt;= ${startDate}
+    		</if>
+    		<if test="endDate != null">
+    			AND end_date &lt;= #{endDate}
+    		</if>
+    	</where>
+    </sql>
+    
+    <select id="selectWhereCourses" parameterType="map" resultMap="CourseResult">
+    	<include refid="courseSql"/>
+    	<include refid="whereSql2"/>
+    </select>
+    
+    <sql id="whereTrimSql">
+    	<trim prefix="WHERE" prefixOverrides="AND|OR">
+    		<if test="tutorId != null">
+    			TUTOR_ID = #{tutorId}
+    		</if>
+    		<if test="courseName != null">
+    			AND name like #{courseName}
+    		</if>
+    	</trim>
+    </sql>
+    
+    <select id="selectTrimCourses" parameterType="map" resultMap="CourseResult">
+    	<include refid="courseSql"/>
+    	<include refid="whereTrimSql"/>
+    </select>
+    
+    <sql id="foreachSql">
+    	<if test="tutorIds != null">
+    		<where>
+    			tutor_id IN
+    			<foreach item="tutorId" collection="tutorIds" index="index" open="(" close=")" separator=",">
+    				#{tutorId}
+    			</foreach>
+       		</where>
+    	</if>
+    </sql>
+    
+    <select id="selectCoursesForeachByTutors" parameterType="map" resultMap="CourseResult">
+    	<include refid="courseSql"/>
+    	<include refid="foreachSql"/>
+    </select>
 </mapper>
